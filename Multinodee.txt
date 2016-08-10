@@ -1,0 +1,350 @@
+﻿
+
+********************************Copy all node Private IPs*************************************************************************
+
+172.31.41.44  ip-172-31-41-44.us-west-2.compute.internal nn
+172.31.41.45  ip-172-31-41-45.us-west-2.compute.internal snn
+172.31.41.46  ip-172-31-41-46.us-west-2.compute.internal dn1
+172.31.41.47  ip-172-31-41-47.us-west-2.compute.internal dn2
+
+******************************authontic key via cmd in windows************************************************************************
+
+C:\user\arshad shaikh\desktop\aa> pscp -i key.ppk key.pem ubuntu@52.18.154.83:/home/ubuntu/.ssh/
+
+
+****************************Connetc to servie via putty******************************************************************
+
+open nn vai putty
+
+**************************Connetc to server via putty******************************************************************
+
+sudo apt-get install dsh
+
+sudo nano /etc/hosts   (past all above four private addresses same as it is in hosts file)
+
+sudo nano /etc/dsh/machines.list 
+
+write below four line.
+( localhost
+  snn
+  dn1
+  dn2 )
+
+
+************************************************************************
+
+ubuntu@ip-172-31-33-200:~$ cd .ssh
+
+ubuntu@ip-172-31-33-200:~/.ssh$ ls
+authorized_keys  ireland.pem
+
+ubuntu@ip-172-31-33-200:~/.ssh$ chmod 400 ireland.pem
+
+
+ubuntu@ip-172-31-39-8:~/.ssh$ cd
+
+ubuntu@ip-172-31-39-8:~$ nano .profile
+
+(write in on eof)
+
+eval `ssh-agent` ssh-add /home/ubuntu/.ssh/ireland2.pem
+
+ubuntu@ip-172-31-33-200:~$ source ~/.profile
+
+----- Output
+Agent pid 1954
+Identity added: /home/ubuntu/.ssh/ireland.pem (/home/ubuntu/.ssh/ireland.pem)
+-----
+
+ubuntu@ip-172-31-33-200:~/.ssh$ dsh -a sudo apt-get update
+
+---- Last two line output
+Fetched 9,955 kB in 3s (2,649 kB/s)
+Reading package lists...
+----
+
+**************** *********  Downloading and installing  hadoop   *********************************
+dsh -a  wget http://apache.mirror.gtcomm.net/hadoop/common/hadoop-1.2.1/hadoop-1.2.1.tar.gz
+
+dsh -a tar -xzvf hadoop-1.2.1.tar.gz 
+
+ubuntu@ip-172-31-33-200:~$ dsh -a sudo mv  hadoop-1.2.1  /usr/local/hadoop
+
+*********************************configuring bashrc linux env setup ******************************************
+
+ubuntu@ip-172-31-33-200:~$ sudo nano ~/.bashrc
+
+export HADOOP_PREFIX=/usr/local/hadoop/ 
+export PATH=$PATH:$HADOOP_PREFIX/bin 
+export JAVA_HOME=/usr/lib/jvm/java-8-oracle 
+export PATH=$PATH:$JAVA_HOME 
+
+---  scp .bashrc .profile snn:/home/ubnuntu
+
+ubuntu@ip-172-31-33-200:~$ echo $PATH
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+
+***************************************************************************
+
+ubuntu@ip-172-31-33-200:~$ cd .ssh
+
+ubuntu@ip-172-31-33-200:~/.ssh$ scp ireland.pem snn:/home/ubuntu/.ssh
+ireland.pem                                                                                                                           100% 1692     1.7KB/s   00:00
+
+ubuntu@ip-172-31-33-200:~/.ssh$ scp ireland.pem dn1:/home/ubuntu/.ssh
+ireland.pem                                                                                                                           100% 1692     1.7KB/s   00:00
+
+
+ubuntu@ip-172-31-33-200:~/.ssh$ scp ireland.pem dn2:/home/ubuntu/.ssh
+ireland.pem                                                             
+
+***************************************************************************
+
+
+ubuntu@ip-172-31-33-200:~/.ssh$ cd
+ubuntu@ip-172-31-33-200:~$ scp .profile .bashrc snn:/home/ubuntu
+.profile                                                                                                                              100%  731     0.7KB/s   00:00
+.bashrc                                                                                                                               100% 3792     3.7KB/s   00:00
+ubuntu@ip-172-31-33-200:~$ scp .profile .bashrc dn1:/home/ubuntu
+.profile                                                                                                                              100%  731     0.7KB/s   00:00
+.bashrc                                                                                                                               100% 3792     3.7KB/s   00:00
+ubuntu@ip-172-31-33-200:~$ scp .profile .bashrc dn2:/home/ubuntu
+.profile                                                                                                                              100%  731     0.7KB/s   00:00
+.bashrc         
+
+*************************************************************************
+
+ubuntu@ip-172-31-33-200:~$ ssh-keygen
+
+The key's randomart image is:
++--[ RSA 2048]----+
+|     ..o*+.      |
+|    . ..o+.      |
+|   . .++++.      |
+|  E . o*+=       |
+|     ..oS        |
+|        +        |
+|       o         |
+|                 |
+|                 |
++-----------------+
+
+*************************************************************************
+
+ubuntu@ip-172-31-33-200:~$ ssh snn
+
+*************************************************************************
+
+ubuntu@ip-172-31-33-199:~$ sudo hostname snn
+
+ubuntu@ip-172-31-33-199:~$ bash
+
+
+
+ubuntu@snn:~$ sudo nano /etc/hosts   ---- (write all above four private addresses same as it is)
+sudo: unable to resolve host snn
+
+ubuntu@snn:~$ ssh-keygen
+
+**************************************************************************
+
+ubuntu@snn:~$ ssh dn1
+ssh 
+ubuntu@snn:~$ ssh dn1
+
+Agent pid 1992
+Identity added: /home/ubuntu/.ssh/ireland.pem (/home/ubuntu/.ssh/ireland.pem)
+
+*************************************************************************
+
+ubuntu@dn1:~$ sudo nano /etc/hosts   ----  (write all above four private addresses same as it is)
+
+ubuntu@dn1:~$ ssh-keygen
+
+******************************************************************************************************
+
+ubuntu@dn1:~$ ssh dn2
+
+ubuntu@ip-172-31-33-197:~$ sudo hostname dn2
+
+ubuntu@ip-172-31-33-197:~$ bash
+
+ubuntu@dn2:~$ sudo nano /etc/hosts     (write all above four private addresses same as it is)
+sudo: unable to resolve host dn2
+
+ubuntu@dn2:~$ ssh-keygen
+
+*******************************************************************************************************
+
+ubuntu@dn2:~$ ssh nn
+
+ubuntu@ip-172-31-33-200:~$ sudo hostname nn
+
+ubuntu@ip-172-31-33-200:~$ bash    -- host ip adressalready copied here
+
+ubuntu@nn:~$ dsh -a  cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+
+
+*********************************** Jdownloading and installing java (Hadoop requires a working Java 1.5+)  **********************************
+(((((( ssh nn
+
+1    ubuntu@nn:~$ dsh -a sudo add-apt-repository ppa:webupd8team/java
+
+2    sudo apt-get install dsh
+
+3    sudo apt-get update
+ 
+4    sudo apt-get install oracle-java8-installer    ))))))
+
+{do for remaing three snn,dn1,dn2,  just enter ssh ssn, and follow four step }
+ 
+
+
+********************************  setting hadoop env  ******************************************
+
+nano /usr/local/hadoop/conf/hadoop-env.sh 
+
+export JAVA_HOME=/usr/lib/jvm/java-8-oracle   
+export HADOOP_OPTS=-Djava.net.preferIPV4Stack=true 
+
+
+*********************************   Configure file  xml  ***********************************************
+ 
+ubuntu@nn:~$  nano /usr/local/hadoop/conf/core-site.xml
+
+<property>
+    <name>fs.default.name</name>    
+<value>hdfs://nn:8020</value> 
+</property> 
+<property>    
+<name>hadoop.tmp.dir</name> 
+   <value>/usr/local/hadoop/tmp</value> 
+</property>
+
+
+ubuntu@nn:~$  nano /usr/local/hadoop/conf/hdfs-site.xml
+
+<property> 
+<name>dfs.replication</name> 
+<value>2</value> 
+</property> 
+<property> 
+<name>dfs.permissions</name> 
+<value>false</value> 
+</property> 
+
+
+ubuntu@nn:~$  nano /usr/local/hadoop/conf/mapred-site.xml
+
+<property>    
+<name>mapred.job.tracker</name>    
+<value>hdfs://nn:8021</value>      
+</property> 
+
+
+ubuntu@nn:~$ cd /usr/local/hadoop/conf
+ubuntu@nn:/usr/local/hadoop/conf$ scp hadoop-env.sh core-site.xml hdfs-site.xml mapred-site.xml snn:/usr/local/hadoop/conf/
+
+hadoop-env.sh                                                                                                                         100% 2534     2.5KB/s   00:00
+core-site.xml                                                                                                                         100%  367     0.4KB/s   00:00
+hdfs-site.xml                                                                                                                         100%  328     0.3KB/s   00:00
+mapred-site.xml                                                                                                                       100%  272     0.3KB/s   00:00
+
+ubuntu@nn:/usr/local/hadoop/conf$ scp hadoop-env.sh core-site.xml hdfs-site.xml mapred-site.xml dn1:/usr/local/hadoop/conf/
+
+hadoop-env.sh                                                                                                                         100% 2534     2.5KB/s   00:00
+core-site.xml                                                                                                                         100%  367     0.4KB/s   00:00
+hdfs-site.xml                                                                                                                         100%  328     0.3KB/s   00:00
+mapred-site.xml                                                                                                                       100%  272     0.3KB/s   00:00
+
+ubuntu@nn:/usr/local/hadoop/conf$ scp hadoop-env.sh core-site.xml hdfs-site.xml mapred-site.xml dn2:/usr/local/hadoop/conf/
+
+hadoop-env.sh                                                                                                                         100% 2534     2.5KB/s   00:00
+core-site.xml                                                                                                                         100%  367     0.4KB/s   00:00
+hdfs-site.xml                                                                                                                         100%  328     0.3KB/s   00:00
+mapred-site.xml                                                                                                                       100%  272     0.3KB/s   00:00
+
+
+
+********************************************   making tmp dir  *******************************************
+
+
+ubuntu@nn:/usr/local/hadoop/conf$ cd
+ubuntu@nn:~$ mkdir /usr/local/hadoop/tmp    (uubuntu@nn:~$ dsh -a mkdir /usr/local/hadoop/tmp)
+
+
+****************************************** Configure master and slave **********************************
+
+ubuntu@nn:~$ nano /usr/local/hadoop/conf/masters
+
+write below two line with #.
+
+(  
+   #localhost
+   snn 
+)
+
+ubuntu@nn:~$ nano /usr/local/hadoop/conf/slaves
+
+write below three line with #.
+
+(  
+   #localhost
+   dn1
+   dn2
+)
+
+******************************************************************************
+
+bash
+
+*****************************************   formatting hadoop namenode  *************************************
+
+ubuntu@nn:~$ hadoop namenode -format
+
+*****************************************  starting hadoop services(deamons)  ******************************************
+
+
+ubuntu@nn:~$ start-all.sh
+
+***************************************** now check all services on each node  ************************************
+
+ubuntu@nn:~$ jps
+4131 NameNode
+4614 Jps
+4299 JobTracker
+
+ubuntu@nn:~$ ssh snn
+ubuntu@snn:~$ jps
+4319 SecondaryNameNode
+4639 Jps
+
+ubuntu@snn:~$ ssh dn1
+ubuntu@dn1:~$ jps
+4067 DataNode
+4549 Jps
+4202 TaskTracker
+
+ubuntu@dn1:~$ ssh dn2
+ubuntu@dn2:~$ jps
+4052 DataNode
+4644 Jps
+4187 TaskTracker
+
+*****************************************  stoping hadoop services(deamons)  ******************************************
+
+
+ubuntu@nn:~$ stop-all.sh
+
+
+***********************************************************************************************************************
+
+
+
+
+
+
+
+
+
+
